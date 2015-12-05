@@ -20,12 +20,11 @@ test('visiting /quotes', function(assert) {
   });
 });
 
-test('visiting /quotes', function(assert) {
+test('visiting /quotes loads all the quotes', function(assert) {
   visit('/');
 
   andThen(function() {
     var quotes = find('.quote');
-
     assert.equal(quotes.length, 3);
   });
 });
