@@ -1,5 +1,15 @@
 export default function() {
 
+  this.get('/quotes', function() {
+    return {
+      quotes: [
+        { id: 1, quotee: 'bearded man', text: 'philosopher quote' },
+        { id: 2, quotee: 'high man',    text: 'keith richards quotes' },
+        { id: 3, quotee: 'nuff said',   text: 'ODB quote'}
+      ]
+    };
+  });
+
   // These comments are here to help you get started. Feel free to delete them.
 
   /*
