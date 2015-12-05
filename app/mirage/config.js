@@ -1,12 +1,8 @@
 export default function() {
 
-  this.get('/quotes', function() {
+  this.get('/quotes', function(db) {
     return {
-      quotes: [
-        { id: 1, quotee: 'bearded man', text: 'philosopher quote' },
-        { id: 2, quotee: 'high man',    text: 'keith richards quotes' },
-        { id: 3, quotee: 'nuff said',   text: 'ODB quote'}
-      ]
+      quotes: db.quotes
     };
   });
 

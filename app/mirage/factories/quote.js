@@ -3,16 +3,15 @@
 
   Create more files in this directory to define additional factories.
 */
-import Mirage/*, {faker} */ from 'ember-cli-mirage';
+import Mirage, {faker} from 'ember-cli-mirage';
 
 export default Mirage.Factory.extend({
   // name: 'Pete',                         // strings
   // age: 20,                              // numbers
   // tall: true,                           // booleans
 
-  // email: function(i) {                  // and functions
-  //   return 'person' + i + '@test.com';
-  // },
+  quotee(i) { return `Person ${i}`; },
+  text(i) { return faker.lorem.sentence() + ': ' + i; }
 
   // firstName: faker.name.firstName,       // using faker
   // lastName: faker.name.firstName,
