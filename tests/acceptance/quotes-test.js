@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { module, test } from 'qunit';
 import startApp from 'kwoter/tests/helpers/start-app';
+import { faker } from 'ember-cli-mirage';
 
 module('Acceptance | quotes', {
   beforeEach: function() {
@@ -55,7 +56,27 @@ test('user sees a form to submit a quote', function(assert){
   visit('/');
 
   andThen(function(){
-    assert.equal(find('.create-quote-form').length, 1, 'theres a quote form');
+    assert.equal(find('.submit-quote-form').length, 1, 'theres a quote form');
   });
 });
+
+test('user can fill out the form and submit', function(assert){
+  let createQuoteFormInputData = {
+    text: faker.lorem.sentence(),
+    quotee: 'Harry McGee'
+  };
+
+  visit('/');
+
+  andThen(function(){
+    fillIn('.quote-text',   createQuoteFormInputData.text);
+    fillIn('.quote-quotee', createQuoteFormInputData.quotee);
+    click('.quote-button');
+
+    andThen(() => {
+      assert.equal(server.db.quotes[0].quotee, createQuoteFormInputData.quotee);
+    });
+  });
+});
+
 
