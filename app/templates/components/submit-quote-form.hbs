@@ -1,0 +1,5 @@
+<form>
+    {{input type="text" name='text' value=quote.text class='quote-text'}}
+    {{input type="text" name='quotee' value=quote.quotee class='quote-quotee'}}
+    <button {{action 'submit'}} class='quote-button' type="submit">{{yield}}</button>
+</form>

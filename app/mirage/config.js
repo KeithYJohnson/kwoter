@@ -6,11 +6,7 @@ export default function() {
     };
   });
 
-  this.post('/quotes', function(db, request) {
-    var attrs = JSON.parse(request.requestBody).quote;
-    var quote = db.quotes.insert(attrs);
-    return quote;
-  });
+  this.post('quotes');
 
   // These comments are here to help you get started. Feel free to delete them.
 
