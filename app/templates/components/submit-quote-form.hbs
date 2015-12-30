@@ -1,5 +1,7 @@
 <form>
-    {{input type="text" name='text' value=quote.text class='quote-text'}}
-    {{input type="text" name='quotee' value=quote.quotee class='quote-quotee'}}
-    <button {{action 'submit'}} class='quote-button' type="submit">{{yield}}</button>
+    {{input type="text" name='text' value=text class='quote-text'}}
+    {{validation-error-field validatee=validations.attrs.text didValidate=didValidate}}
+
+    {{input type="text" name='quotee' value=quotee class='quote-quotee'}}
+    <button {{action 'submit'}} class='quote-button' type="submit" type="submit" disabled={{v-get this 'isInvalid'}}>{{yield}}</button>
 </form>

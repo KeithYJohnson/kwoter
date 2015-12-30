@@ -1,0 +1,6 @@
+{{yield}}
+{{#if hasErrors}}
+  {{#each errors as |error|}}
+    {{#kwoter-error error=error}}{{/kwoter-error}}
+  {{/each}}
+{{/if}}

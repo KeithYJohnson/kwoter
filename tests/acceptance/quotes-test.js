@@ -13,6 +13,11 @@ module('Acceptance | quotes', {
   }
 });
 
+const addQuoteIconClass =          '.add-quote-icon';
+const addQuoteModalClass =         '.add-quote-modal';
+const quoteModalTextInputClass =   '.quote-modal-text-input';
+const quoteModalQuoteeInputClass = '.quote-modal-quotee-input';
+
 test('visiting /quotes', function(assert) {
   visit('/');
 
@@ -61,6 +66,8 @@ test('user sees a form to submit a quote', function(assert){
 });
 
 test('user can fill out the form and submit', function(assert){
+  server.createList('quote', 3);
+
   let createQuoteFormInputData = {
     text: faker.lorem.sentence(),
     quotee: 'Harry McGee'
@@ -74,9 +81,49 @@ test('user can fill out the form and submit', function(assert){
     click('.quote-button');
 
     andThen(() => {
-      assert.equal(server.db.quotes[0].quotee, createQuoteFormInputData.quotee);
+      // Test that its persisted correctly
+      var lastQuoteIndex = server.db.quotes.length - 1;
+      assert.equal(server.db.quotes[lastQuoteIndex].quotee, createQuoteFormInputData.quotee);
+
+      // Test that all the users quotes are still rendered plus the new one
+      var quotes = find('.quote');
+      assert.equal(quotes.length, 4);
     });
   });
 });
 
+test('user doesnt cant submit because the button is disabled', function(assert){
+  visit('/');
+  andThen(() => {
+    fillIn('.quote-quotee', 'Harry McGeraldson');
+    click('.quote-button');
 
+    andThen(() =>{
+      assert.equal(server.db.quotes.length, 0, 'The quote wasn\'t added to the store.');
+      assert.equal(find('.quote-button:disabled').length, 1, 'the button is disabled');
+    });
+  });
+});
+
+test('user doesnt add the quote\'s quotee and sees errors', function(assert){
+  visit('/');
+  andThen(() =>{
+    fillIn('.quote-text', 'I invented the internet.');
+    click('.quote-button');
+
+    andThen(() =>{
+      assert.equal(server.db.quotes.length, 0, 'The quote wasn\'t added to the store.');
+      assert.equal(find('.quote-button:disabled').length, 1, 'the button is disabled');
+    });
+  });
+});
+
+test('user sees modal after clicking the add-quote-icon', function(assert){
+  visit('/');
+  click(addQuoteIconClass);
+  andThen( () => {
+    assert.equal(find(addQuoteModalClass).length, 1, 'The quote modal renders');
+    assert.equal(find(quoteModalTextInputClass).length, 1, 'quote modal has a text input');
+    assert.equal(find(quoteModalQuoteeInputClass).length, 1, 'quote modal has a quotee input');
+  });
+});
