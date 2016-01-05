@@ -17,12 +17,9 @@ test('user can set the quotes properties and create a record', function(assert) 
 
   // Simulate user input
   // https://github.com/ember-cli/ember-cli/issues/4532
-  // In component this is actually an Ember.Object
-  // but we do not have access to Ember in this test.
 
   this.set('text',textInput);
   this.set('quotee',quoteeInput);
-
 
   // Handle any anyctions with this.on('myAction', function(val) { ... });
   this.render(hbs`{{submit-quote-form text=text quotee=quotee submit='assertSubmitted'}}`);
@@ -38,11 +35,6 @@ test('user can set the quotes properties and create a record', function(assert) 
 test('it is invalid if the user doesnt enter the quotes text', function(assert) {
   assert.expect(1);
 
-  // Simulate user input
-  // https://github.com/ember-cli/ember-cli/issues/4532
-  // In component this is actually an Ember.Object
-  // but we do not have access to Ember in this test.
-
   this.set('text','');
   this.set('quotee',quoteeInput);
 
@@ -57,10 +49,6 @@ test('it is invalid if the user doesnt enter the quotes text', function(assert) 
 test('it is invalid if the user doesnt enter the quotee', function(assert) {
   assert.expect(1);
 
-  // Simulate user input
-  // https://github.com/ember-cli/ember-cli/issues/4532
-  // In component this is actually an Ember.Object
-  // but we do not have access to Ember in this test.
   this.set('text',textInput);
   this.set('quotee','');
 
