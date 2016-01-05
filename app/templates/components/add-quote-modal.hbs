@@ -1,0 +1,12 @@
+{{#unless isShowingModal}}
+	{{fa-icon "plus-square-o" click=(action "toggleModal")}}
+{{/unless}}
+
+{{#if isShowingModal}}
+	{{#modal-dialog}}
+		<br>
+		{{#submit-quote-form text=text quotee=quotee action='toggleModal'}}
+		Save
+		{{/submit-quote-form}}
+	{{/modal-dialog}}
+{{/if}}

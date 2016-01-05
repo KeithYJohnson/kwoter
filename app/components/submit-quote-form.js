@@ -25,10 +25,9 @@ export default Ember.Component.extend(Validations, {
       let quotee = this.get('quotee');
       let store  = this.get('store');
 
-      // validateSync for not-async validations
-
       let validations = this.get('validations').validateSync().validations;
       this.set('didValidate', true);
+      this.sendAction();
       // errorAttrs = validations.get('errors').getEach('attribute');
       if (validations.get('isValid')) {
         let quote = store.createRecord('quote', {
@@ -40,18 +39,6 @@ export default Ember.Component.extend(Validations, {
       } else {
         console.log("Errors!");
       }
-
-      // this.validate().then( () =>{
-      //   debugger;
-      //     let quote = store.createRecord('quote', {
-      //       text:   text,
-      //       quotee: quotee,
-      //       id:     v4(),
-      //     });
-      //     quote.save();
-      // }).catch( (errors) =>{
-      //   debugger
-      // });
     }
   }
 });
