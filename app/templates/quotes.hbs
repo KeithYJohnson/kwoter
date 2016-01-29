@@ -1,7 +1,5 @@
 {{#each model as |quote|}}
-  <div class='quote'>
-    Thus spake {{quote.quotee}}: {{quote.text}}
-  </div>
+  {{quote-bubble quote=quote placeRandomly=true}}
 {{/each}}
 
 {{add-quote-modal}}

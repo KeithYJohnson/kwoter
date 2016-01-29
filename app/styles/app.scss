@@ -1,3 +1,17 @@
 @import "ember-modal-dialog/ember-modal-structure";
 @import "ember-modal-dialog/ember-modal-appearance";
 @import "bower_components/font-awesome/scss/font-awesome";
+@import 'components/quote-bubble';
+
+body.ember-application {
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+// At some point need to 9x $(document) size
+// drag needs to the left needs to be overwritten
+// so as not to simulate a click on the 'back' button
+// html {
+//    height: 10000px;
+//    width: 10000px
+// }
