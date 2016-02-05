@@ -3,12 +3,12 @@ export function initialize(/* container, application */) {
   let doc = $(document);
   let documentHeight = doc.height();
   let documentWidth = doc.width();
-  console.log('Original Height: ' + documentHeight + "Original Width: " + documentWidth);
+  console.log('Original Height: ' + documentHeight + " Original Width: " + documentWidth);
 
   let resizedElement = $('body');
   resizedElement.height(3*documentHeight);
   resizedElement.width( 3*documentWidth);
-  console.log('New Height: ' + resizedElement.height()  + "New Width: " + resizedElement.width());
+  console.log('New Height: ' + resizedElement.height()  + " New Width: " + resizedElement.width());
 }
 
 export default {
