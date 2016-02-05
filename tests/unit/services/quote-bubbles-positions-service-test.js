@@ -1,59 +1,39 @@
 import { moduleFor, test } from 'ember-qunit';
 import _ from 'lodash/lodash';
 import Ember from 'ember';
+import between from 'kwoter/initializers/number-between';
 
 let getBoundingClientRect = {
+  id: 'ember-123',
   bottom: 95.8125,
   height: 28,
   left: 18,
   right: 528,
   top: 67.8125,
-  width: 510
-};
-
-let bottomEdgeOverlappingRect = {
-  bottom: 68
-};
-
-let topEdgeOverlappingRect = {
-  bottom: 95.8125,
-  left: 18,
-  right: 528,
-  top: 94.8125,
   width: 510
 };
 
 let leftEdgeOverlappingRect = {
   bottom: 95.8125,
   height: 28,
-  left: 527,
+  left: 65,
   right: 1038,
   top: 67.8125,
   width: 510
 };
 
-let rightEdgeOverlappingRect = {
-  bottom: 95.8125,
-  height: 28,
-  left: 9,
-  right: 19,
-  top: 67.8125,
-  width: 10
-};
 
 moduleFor('service:quote-bubbles-positions-service', 'Unit | Service | quote bubbles positions', {
   // Specify the other units that are required for this test.
-  // needs: ['service:foo']
+  needs: ['model:quote-bubble'],
   beforeEach(){
-    // var service = this.subject
+    between.initialize();
   }
 });
 
 test('generateNotOverlappingPosition() when theres room', function(assert){
   let service = this.subject();
-
-  let position = service.generateNotOverlappingPosition();
-
+  let position = Ember.run(service, 'generateNotOverlappingPosition', getBoundingClientRect);
   assert.ok(position.top);
   assert.ok(position.left);
   assert.ok(position.right);
@@ -68,7 +48,7 @@ test('generateNotOverlappingPosition() when theres no room', function(assert){
     body.append( Ember.$("<div class='quote'/>") );
   });
 
-  assert.notOk(service.generateNotOverlappingPosition());
+  assert.notOk(service.generateNotOverlappingPosition(getBoundingClientRect));
 });
 
 test('document is not full: isDocumentFull()', function(assert){
@@ -100,28 +80,30 @@ test('document is full: isDocumentFull()', function(assert){
 test('generateRandomPosition', function(assert) {
   let service = this.subject();
 
-  let position = service.generateRandomPosition();
+  let position = service.generateRandomPosition(getBoundingClientRect);
 
   assert.ok(position.top, 'it has a value for top');
-  assert.ok(position.bottom, 'it has a value for bottom');
   assert.ok(position.left, 'it has a value for left');
-  assert.ok(position.right, 'it has a value for right');
 });
 
 test('addPosition', function(assert){
-  var service = this.subject();
-  var startingLength = service.get('positions').length;
+  let service = this.subject();
+  let store = service.get('store');
+  let startingLength = store.peekAll('quote-bubble').get('content').length;
 
-  service.addPosition(getBoundingClientRect);
+  Ember.run(service, 'addPosition', getBoundingClientRect);
   assert.equal(
-    service.get('positions').length,
-    startingLength += 1, 'it pushses the positions onto the array'
+    store.peekAll('quote-bubble').get('content').length,
+    startingLength += 1, 'it pushes the positions onto the array'
   );
 });
 
 test('isOverlap', function(assert){
   var service = this.subject();
-  service.addPosition(getBoundingClientRect);
+  // Ember.run(service, 'addPosition', getBoundingClientRect);
+
+  let store = service.get('store');
+  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, left: 60, right:70 } );
   assert.equal(
     service.isOverlap(leftEdgeOverlappingRect),
     true, 'any edge of the rectangle overlaps'
@@ -130,32 +112,44 @@ test('isOverlap', function(assert){
 
 test('isLeftEdgeOverlap', function(assert){
   let service = this.subject();
+  let store = service.get('store');
+  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, left: 60, right:70 } );
+
   assert.equal(
-    service.isLeftEdgeOverlap(getBoundingClientRect, leftEdgeOverlappingRect),
-    true, 'the left edge of the rectangle overlaps'
+    service.isLeftEdgeOverlap(quoteBubble, {left: 65 }),
+    true, 'left edge of the rectangle overlaps'
   );
 });
 
 test('isRightEdgeOverlap', function(assert){
   let service = this.subject();
+  let store = service.get('store');
+  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, left: 60, right:70 } );
+
   assert.equal(
-    service.isRightEdgeOverlap(getBoundingClientRect, rightEdgeOverlappingRect),
+    service.isRightEdgeOverlap(quoteBubble, {right: 65 }),
     true, 'right edge of the rectangle overlaps'
   );
 });
 
 test('isTopEdgeOverlap', function(assert){
   let service = this.subject();
+  let store = service.get('store');
+  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, top: 60, bottom:70 } );
+
   assert.equal(
-    service.isTopEdgeOverlap(getBoundingClientRect, topEdgeOverlappingRect),
-    true, 'top edge of the rectangle overlaps'
+    service.isTopEdgeOverlap(quoteBubble, { top: 65 }),
+    true, 'top edge of the new coordinates overlaps an already placed quote-bubble'
   );
 });
 
-test('isTopEdgeOverlap', function(assert){
+test('isBottomEdgeOverlap', function(assert){
   let service = this.subject();
+  let store = service.get('store');
+  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, top: 60, bottom:70 } );
+
   assert.equal(
-    service.isBottomEdgeOverlap(getBoundingClientRect, bottomEdgeOverlappingRect),
-    true, 'bottom edge of the rectangle overlaps'
+    service.isBottomEdgeOverlap(quoteBubble, { bottom: 65 }),
+    true, 'bottom edge of the new coordinates overlaps an already placed quote-bubble'
   );
 });

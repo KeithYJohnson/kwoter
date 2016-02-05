@@ -7,22 +7,32 @@ export default Ember.Component.extend({
 	text: null,
   placeRandomly: false,
   quoteBubblesPositionsService: Ember.inject.service(),
+	store: Ember.inject.service(),
 
-	didRender(){
+	didInsertElement(){
 		let quoteBubblesPositionsService = this.get('quoteBubblesPositionsService');
 		if ( quoteBubblesPositionsService.isDocumentFull() ){
-			console.log("ITS FULL");
+			console.log("ITS FULL from components/quote-bubble");
 
 			// TODO App should only fetch as many quotes as necessary
 			// to fill the viewport on entering into the route.
 			// Will refactor this out later.
 			this.$().remove();
 		} else {
-			let position = quoteBubblesPositionsService.generateNotOverlappingPosition();
-			console.log('random position: ' + JSON.stringify(position));
-			this.$().css({ left: `${position.left}px`,
-										 top:  `${position.top}px`,
-										 position: 'absolute' });
+			let dimensions = this.$()[0].getBoundingClientRect();
+
+			// Needed because these dimensions will be createRecorded into ember data as quote-bubble
+			// and they will need an id.
+			dimensions.id = this.$()[0].id;
+			let position = quoteBubblesPositionsService.generateNotOverlappingPosition(dimensions);
+			this.$().css({
+				left: `${position.left}px`,
+			  top:  `${position.top}px`,
+        position: 'absolute'
+			});
 		}
+	},
+
+	didRender(){
 	}
 });

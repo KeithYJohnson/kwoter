@@ -10,8 +10,9 @@ export default Ember.Service.extend({
   widthBuffer: 100,
   averageHeight: 20,
   averageWidth: 400,
-  negativeSpaceBuffer: 25,
+  negativeSpaceBuffer: 10, // Just an arbitrary multiplier to ensure more or less spacing outside of specific bubble buffers
   attempts: 0,
+  store: Ember.inject.service(),
   averageBubbleArea: Ember.computed('averageHeight', 'averageWidth', 'heightBuffer', 'widthBuffer', function() {
     return ( this.get('averageHeight') + this.get('heightBuffer') ) *
            ( this.get('averageWidth')  + this.get('widthBuffer') ) ;
@@ -19,8 +20,8 @@ export default Ember.Service.extend({
 
 
   addPosition(coordinates){
-    let positions = this.get('positions');
-    positions.push(coordinates);
+    let store = this.get('store');
+    store.createRecord('quote-bubble',coordinates);
   },
 
   isDocumentFull(){
@@ -32,11 +33,12 @@ export default Ember.Service.extend({
     return totalAreaCoveredByQuoteBubbles > documentArea;
   },
 
-  generateNotOverlappingPosition(){
-    let positionToTry = this.generateRandomPosition();
+  generateNotOverlappingPosition(dimensions){
+    let positionToTry = this.generateRandomPosition(dimensions);
     let attempts = this.get('attempts');
 
     if ( this.isDocumentFull() ) {
+      console.log("ITS FULL");
       return false;
     } else {
       if ( !this.isOverlap(positionToTry) ) {
@@ -52,63 +54,66 @@ export default Ember.Service.extend({
 
         // TODO write test for bug of the following line
         // being this.generateNotOverlappingPosition();
-        return this.generateNotOverlappingPosition();
+        return this.generateNotOverlappingPosition(dimensions);
       }
     }
   },
 
-  generateRandomPosition(){
+  generateRandomPosition(dimensions){
     let quoteContainer = Ember.$(this.get('quoteContainingElement'));
     let randomCssLeft =
-      steppedRandomInteger(0, quoteContainer.width(), 10);
+      steppedRandomInteger(0, quoteContainer.width(), 25);
     let randomCssTop =
-      steppedRandomInteger(0, quoteContainer.height(), 10);
+      steppedRandomInteger(0, quoteContainer.height(), 15);
 
     return {
-      left: randomCssLeft,
       top: randomCssTop,
-      right: randomCssLeft + this.get('averageWidth'),
-      bottom: randomCssTop + this.get('averageHeight')
+      bottom: randomCssTop + dimensions.height,
+      left: randomCssLeft,
+      right: randomCssLeft + dimensions.width
     };
   },
 
   isOverlap(coordinates){
-    let positions = this.get('positions');
-    for (var rectangle of positions) {
-      return (this.isLeftEdgeOverlap(rectangle,   coordinates)   ||
-              this.isRightEdgeOverlap(rectangle,  coordinates)   ||
-              this.isTopEdgeOverlap(rectangle,    coordinates)   ||
-              this.isBottomEdgeOverlap(rectangle, coordinates) );
-    }
+    let store = this.get('store');
+    let quoteBubbles = store.peekAll('quote-bubble');
+    let that = this;
+    return quoteBubbles.any(function(quoteBubble){
+      console.log("quoteBubble coordinates: "+ JSON.stringify(quoteBubble.get('coordinates')));
+      console.log("toTry coordinates: " + JSON.stringify(coordinates));
+
+      return (that.isLeftEdgeOverlap(quoteBubble,   coordinates)   ||
+              that.isRightEdgeOverlap(quoteBubble,  coordinates)   ||
+              that.isTopEdgeOverlap(quoteBubble,    coordinates)   ||
+              that.isBottomEdgeOverlap(quoteBubble, coordinates) );
+    });
   },
 
-  isLeftEdgeOverlap(rectangle, newCoordinates){
+  isLeftEdgeOverlap(quoteBubble, newCoordinates){
     return newCoordinates.left.between(
-      rectangle.left,
-      rectangle.right
+      quoteBubble.get('left'),
+      quoteBubble.get('right')
     );
   },
 
-  isRightEdgeOverlap(rectangle, newCoordinates){
+  isRightEdgeOverlap(quoteBubble, newCoordinates){
     return newCoordinates.right.between(
-      rectangle.left,
-      rectangle.right
+      quoteBubble.get('left'),
+      quoteBubble.get('right')
     );
   },
 
-  isTopEdgeOverlap(rectangle, newCoordinates){
+  isTopEdgeOverlap(quoteBubble, newCoordinates){
     return newCoordinates.top.between(
-      rectangle.bottom,
-      rectangle.top
+      quoteBubble.get('bottom'),
+      quoteBubble.get('top')
     );
   },
 
-  isBottomEdgeOverlap(rectangle, newCoordinates){
+  isBottomEdgeOverlap(quoteBubble, newCoordinates){
     return newCoordinates.bottom.between(
-      rectangle.bottom,
-      rectangle.top
+      quoteBubble.get('bottom'),
+      quoteBubble.get('top')
     );
   },
-
-
 });
