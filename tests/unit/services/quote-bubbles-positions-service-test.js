@@ -103,7 +103,7 @@ test('isOverlap', function(assert){
   // Ember.run(service, 'addPosition', getBoundingClientRect);
 
   let store = service.get('store');
-  let quoteBubble = Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, left: 60, right:70 } );
+  Ember.run(store, 'createRecord', 'quote-bubble', { id: 1, left: 60, right:70 } );
   assert.equal(
     service.isOverlap(leftEdgeOverlappingRect),
     true, 'any edge of the rectangle overlaps'
