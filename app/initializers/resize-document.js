@@ -1,11 +1,12 @@
+import Ember from 'ember';
+
 export function initialize(/* container, application */) {
-  // application.inject('route', 'foo', 'service:foo');
-  let doc = $(document);
+  let doc = Ember.$(document);
   let documentHeight = doc.height();
   let documentWidth = doc.width();
   console.log('Original Height: ' + documentHeight + " Original Width: " + documentWidth);
 
-  let resizedElement = $('body');
+  let resizedElement = Ember.$('body');
   resizedElement.height(3*documentHeight);
   resizedElement.width( 3*documentWidth);
   console.log('New Height: ' + resizedElement.height()  + " New Width: " + resizedElement.width());

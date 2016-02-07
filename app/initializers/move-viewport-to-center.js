@@ -1,27 +1,29 @@
+import Ember from 'ember';
+
 export function initialize(/* container, application */) {
   // Resize-document Whatever-x'ed the document size by area
   // This moves the viewport to the center of the newly
   // enlarged document
   let viewport = {
-    l: $(window).scrollLeft(),
-    t: $(window).scrollTop(),
-    w: $(window).width(),
-    h: $(window).height()
+    l: Ember.$(window).scrollLeft(),
+    t: Ember.$(window).scrollTop(),
+    w: Ember.$(window).width(),
+    h: Ember.$(window).height()
   };
 
   function addElementAtCenterOfBody(width, height){
-    let body = $('body');
-    let centeredHeight = `${height / 3}px`;
-    let centeredWidth = `${width / 3}px`;
+    let body = Ember.$('body');
+    let centeredHeight = `Ember.${height / 3}px`;
+    let centeredWidth = `Ember.${width / 3}px`;
 
     body.append(
-      $("<div class='for-centering'/>").css({ top:centeredHeight, left:centeredWidth })
+      Ember.$("<div class='for-centering'/>").css({ top:centeredHeight, left:centeredWidth })
     );
   }
 
   if ( viewport.l === 0 && viewport.t === 0){
     addElementAtCenterOfBody(viewport.width, viewport.height);
-    $(window).scrollTop($('div.for-centering').offset().top);
+    Ember.$(window).scrollTop(Ember.$('div.for-centering').offset().top);
   }
 }
 
