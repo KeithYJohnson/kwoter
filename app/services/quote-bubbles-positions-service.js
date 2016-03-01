@@ -17,7 +17,19 @@ export default Ember.Service.extend({
     return ( this.get('averageHeight') + this.get('heightBuffer') ) *
            ( this.get('averageWidth')  + this.get('widthBuffer') ) ;
   }),
-
+  quoteContainerHeight: Ember.computed('quoteContainingElement', function(){
+    let element = this.get('quoteContainingElement');
+    return Ember.$(element).height();
+  }),
+  quoteContainerWidth: Ember.computed('quoteContainingElement', function(){
+    let element = this.get('quoteContainingElement');
+    return Ember.$(element).width();
+  }),
+  documentArea: Ember.computed('quoteContainerHeight','quoteContainerWidth',function(){
+    let height = this.get('quoteContainerHeight');
+    let width = this.get('quoteContainerWidth');
+    return height * width;
+  }),
 
   addPosition(coordinates){
     let store = this.get('store');
@@ -25,9 +37,7 @@ export default Ember.Service.extend({
   },
 
   isDocumentFull(){
-    let quoteContainingElement = this.get('quoteContainingElement');
-    let documentArea = Ember.$(quoteContainingElement).width() * Ember.$(quoteContainingElement).height();
-
+    let documentArea = this.get('documentArea');
     let averageBubbleArea = this.get('averageBubbleArea');
     let totalAreaCoveredByQuoteBubbles = ( Ember.$('.quote').length + this.get('negativeSpaceBuffer') ) * averageBubbleArea;
     return totalAreaCoveredByQuoteBubbles > documentArea;
@@ -38,7 +48,7 @@ export default Ember.Service.extend({
     let attempts = this.get('attempts');
 
     if ( this.isDocumentFull() ) {
-      console.log("ITS FULL");
+      // console.log("ITS FULL");
       return false;
     } else {
       if ( !this.isOverlap(positionToTry) ) {
@@ -46,11 +56,11 @@ export default Ember.Service.extend({
         this.addPosition(positionToTry);
         return positionToTry;
       } else if (attempts > tooManyTries) {
-        console.log('too many tries');
+        // console.log('too many tries');
         return false;
       } else {
         this.incrementProperty('attempts');
-        console.log('attempts' + this.get('attempts'));
+        // console.log('attempts' + this.get('attempts'));
 
         // TODO write test for bug of the following line
         // being this.generateNotOverlappingPosition();
@@ -62,9 +72,9 @@ export default Ember.Service.extend({
   generateRandomPosition(dimensions){
     let quoteContainer = Ember.$(this.get('quoteContainingElement'));
     let randomCssLeft =
-      steppedRandomInteger(0, quoteContainer.width(), 25);
+      steppedRandomInteger(0, quoteContainer.width(), 10);
     let randomCssTop =
-      steppedRandomInteger(0, quoteContainer.height(), 15);
+      steppedRandomInteger(0, quoteContainer.height(), 10);
 
     return {
       top: randomCssTop,
@@ -79,8 +89,8 @@ export default Ember.Service.extend({
     let quoteBubbles = store.peekAll('quote-bubble');
     let that = this;
     return quoteBubbles.any(function(quoteBubble){
-      console.log("quoteBubble coordinates: "+ JSON.stringify(quoteBubble.get('coordinates')));
-      console.log("toTry coordinates: " + JSON.stringify(coordinates));
+      // console.log("quoteBubble coordinates: "+ JSON.stringify(quoteBubble.get('coordinates')));
+      // console.log("toTry coordinates: " + JSON.stringify(coordinates));
 
       return (that.isLeftEdgeOverlap(quoteBubble,   coordinates)   ||
               that.isRightEdgeOverlap(quoteBubble,  coordinates)   ||

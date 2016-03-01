@@ -1,10 +1,21 @@
-export default function() {
+import {faker} from 'ember-cli-mirage';
 
-  this.get('/quotes', function(db) {
-    return {
-      quotes: db.quotes
-    };
+export default function() {
+  this.get('/quotes', function(db,request) {
+    if (request.queryParams.limit){
+      var quotes = [];
+      for (var i = 1; i <= 10; i++) {
+        let quote = db.quote.create({quotee: `Inserted via scroll`, text: faker.lorem.sentence()} );
+        quotes.push(quote.attrs);
+      }
+      return {quotes: quotes};
+    }
+    else {
+      return db.all('quote');
+    }
   });
+
+
 
   this.post('quotes');
 
