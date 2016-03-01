@@ -7,10 +7,12 @@ export default Ember.Component.extend({
 	text: null,
   placeRandomly: false,
   quoteBubblesPositionsService: Ember.inject.service(),
+	detectScroll: Ember.inject.service(),
 	store: Ember.inject.service(),
 
 	didInsertElement(){
 		let quoteBubblesPositionsService = this.get('quoteBubblesPositionsService');
+		this.get('detectScroll');
 		if ( quoteBubblesPositionsService.isDocumentFull() ){
 			console.log("ITS FULL from components/quote-bubble");
 
