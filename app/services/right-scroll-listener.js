@@ -10,6 +10,7 @@ export default Ember.Service.extend({
   store:      Ember.inject.service(),
   positioner: Ember.inject.service('quote-bubbles-positions-service'),
   calculator: Ember.inject.service('how-many-quotes-will-fit-calculator'),
+  strategy:   Ember.inject.service('position-strategy'),
 
   turnOn(){
     Ember.$(window).on('scroll', Ember.$.proxy(this.didScroll, this));
@@ -22,11 +23,13 @@ export default Ember.Service.extend({
   didScroll(){
     if ( this.isScrolledRight() ){
       let store = this.get('store');
-      let positioner = this.get('positioner');
       let calculator = this.get('calculator');
 
       let numberOfQuotesToGrab = calculator.calculate();
-      store.query('quote', { limit: numberOfQuotesToGrab })
+      store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
+        let strategy = this.get('strategy');
+        strategy.set('where','right');
+      })
     }
   },
 

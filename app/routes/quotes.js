@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   quotes: null,
+  detectScroll: Ember.inject.service(),
 
   model: function() {
   	/*
@@ -16,5 +17,10 @@ export default Ember.Route.extend({
 		though it'll be hardcoded at first.
   	*/
     return this.store.findAll('quote');
-  }
+  },
+
+  afterModel: function(){
+    let scrollKeeper = this.get('detectScroll');
+    scrollKeeper.registerScrollListeners();
+  },
 });
