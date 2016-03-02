@@ -3,19 +3,13 @@ import Ember from 'ember';
 export default Ember.Component.extend({
 	tagName: 'div',
 	classNames: ['quote'],
-	quotee: null,
-	text: null,
-  placeRandomly: false,
   quoteBubblesPositionsService: Ember.inject.service(),
-	detectScroll: Ember.inject.service(),
+	strategy:   Ember.inject.service('position-strategy'),
 	store: Ember.inject.service(),
 
 	didInsertElement(){
 		let quoteBubblesPositionsService = this.get('quoteBubblesPositionsService');
-		this.get('detectScroll');
 		if ( quoteBubblesPositionsService.isDocumentFull() ){
-			console.log("ITS FULL from components/quote-bubble");
-
 			// TODO App should only fetch as many quotes as necessary
 			// to fill the viewport on entering into the route.
 			// Will refactor this out later.
@@ -33,8 +27,5 @@ export default Ember.Component.extend({
         position: 'absolute'
 			});
 		}
-	},
-
-	didRender(){
 	}
 });
