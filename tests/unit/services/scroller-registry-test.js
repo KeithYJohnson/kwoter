@@ -1,6 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('service:detect-scroll', 'Unit | Service | detect scroll', {
+moduleFor('service:scroller-register', 'Unit | Service | scroller registry', {
   // Specify the other units that are required for this test.
   // needs: ['service:foo']
 });
