@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   quotes: null,
-  detectScroll: Ember.inject.service(),
+  scrollerRegistry: Ember.inject.service(),
 
   model: function() {
   	/*
@@ -20,7 +20,7 @@ export default Ember.Route.extend({
   },
 
   afterModel: function(){
-    let scrollRegistry = this.get('detectScroll');
-    scrollRegistry.registerScrollListeners();
+    let scrollerRegistry = this.get('scrollerRegistry');
+    scrollerRegistry.registerScrollListeners();
   },
 });
