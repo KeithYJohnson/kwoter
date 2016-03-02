@@ -1,11 +1,13 @@
 import Ember from 'ember';
-import {  steppedRandomInteger } from '../utils/random-numbers';
+import { steppedRandomInteger } from '../utils/random-numbers';
+import QuoteContainingElement  from 'kwoter/constants/quote-containing-element';
+import MultiplyWidthBy from 'kwoter/constants/did-scroll-document-multiplier';
 
 const tooManyTries = 1000;
 
 export default Ember.Service.extend({
   positions: [],
-  quoteContainingElement: 'body',
+  quoteContainingElement: QuoteContainingElement,
   heightBuffer: 50,
   widthBuffer: 100,
   averageHeight: 20,
@@ -13,6 +15,7 @@ export default Ember.Service.extend({
   negativeSpaceBuffer: 10, // Just an arbitrary multiplier to ensure more or less spacing outside of specific bubble buffers
   attempts: 0,
   store: Ember.inject.service(),
+  positionStrategy: Ember.inject.service(),
   averageBubbleArea: Ember.computed('averageHeight', 'averageWidth', 'heightBuffer', 'widthBuffer', function() {
     return ( this.get('averageHeight') + this.get('heightBuffer') ) *
            ( this.get('averageWidth')  + this.get('widthBuffer') ) ;
@@ -70,9 +73,22 @@ export default Ember.Service.extend({
   },
 
   generateRandomPosition(dimensions){
+    let strategy = this.get('positionStrategy');
     let quoteContainer = Ember.$(this.get('quoteContainingElement'));
+    let viewportWidth = Ember.$(window).width();
+
+    let leftEdge = 0;
+    let rightEdge = quoteContainer.width();
+    let location = strategy.get('where');
+
+
+    if ( location === 'right' ) {
+      leftEdge = quoteContainer.width() - (viewportWidth * MultiplyWidthBy);
+      rightEdge = quoteContainer.width();
+    }
+
     let randomCssLeft =
-      steppedRandomInteger(0, quoteContainer.width(), 10);
+      steppedRandomInteger(leftEdge, rightEdge, 10);
     let randomCssTop =
       steppedRandomInteger(0, quoteContainer.height(), 10);
 
