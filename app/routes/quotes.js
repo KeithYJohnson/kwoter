@@ -20,7 +20,7 @@ export default Ember.Route.extend({
   },
 
   afterModel: function(){
-    let scrollKeeper = this.get('detectScroll');
-    scrollKeeper.registerScrollListeners();
+    let scrollRegistry = this.get('detectScroll');
+    scrollRegistry.registerScrollListeners();
   },
 });
