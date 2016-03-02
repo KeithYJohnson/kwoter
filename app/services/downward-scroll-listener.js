@@ -1,14 +1,7 @@
 import Ember from 'ember';
+import ScrollerSwitch from 'kwoter/mixins/scroller-switch';
 
-export default Ember.Service.extend({
-  turnOn(){
-    Ember.$(window).on('scroll', Ember.$.proxy(this.didScroll, this));
-  },
-
-  turnOff(){
-    Ember.$(window).off('scroll', Ember.$.proxy(this.didScroll, this));
-  },
-
+export default Ember.Service.extend(ScrollerSwitch, {
   didScroll(){
   }
 });

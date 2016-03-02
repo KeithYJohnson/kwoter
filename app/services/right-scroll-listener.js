@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import MultiplyWidthBy from 'kwoter/constants/did-scroll-document-multiplier';
 import QuoteContainingElement from 'kwoter/constants/quote-containing-element';
+import ScrollerSwitch from 'kwoter/mixins/scroller-switch';
 
 // This is just a built in configurable buffer so
 // that there's some extra time to fetch and render
@@ -8,18 +9,10 @@ import QuoteContainingElement from 'kwoter/constants/quote-containing-element';
 // of the $(document)
 const buffer = 50;
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(ScrollerSwitch, {
   store:      Ember.inject.service(),
   calculator: Ember.inject.service('how-many-quotes-will-fit-calculator'),
   strategy:   Ember.inject.service('position-strategy'),
-
-  turnOn(){
-    Ember.$(window).on('scroll', Ember.$.proxy(this.didScroll, this));
-  },
-
-  turnOff(){
-    Ember.$(window).off('scroll', Ember.$.proxy(this.didScroll, this));
-  },
 
   didScroll(){
     if ( this.isScrolledRight() ){
