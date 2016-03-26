@@ -1,12 +1,8 @@
 import Ember from 'ember';
+import ScrollerSwitch from 'kwoter/mixins/scroller-switch';
 import MultiplyWidthBy from 'kwoter/constants/did-scroll-document-multiplier';
 import QuoteContainingElement from 'kwoter/constants/quote-containing-element';
-import ScrollerSwitch from 'kwoter/mixins/scroller-switch';
 
-// This is just a built in configurable buffer so
-// that there's some extra time to fetch and render
-// quotes as the user scrolls to the right-most edge
-// of the $(document)
 const buffer = 50;
 
 export default Ember.Service.extend(ScrollerSwitch, {
@@ -15,7 +11,7 @@ export default Ember.Service.extend(ScrollerSwitch, {
   strategy:   Ember.inject.service('position-strategy'),
 
   didScroll(){
-    if ( this.isScrolledRight() ){
+    if ( this.isScrolledToBottom() ){
       let store = this.get('store');
       let calculator = this.get('calculator');
 
@@ -23,26 +19,27 @@ export default Ember.Service.extend(ScrollerSwitch, {
       this.widenQuoteContainer();
       store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
         let strategy = this.get('strategy');
-        strategy.set('where','right');
+        strategy.set('where','down');
       });
+
     }
-  },
-
-  isScrolledRight(){
-    let $viewportWidth = Ember.$(window).width();
-    let $documentWidth = Ember.$(document).width();
-
-    let $leftEdgeOfViewport = Ember.$(window).scrollLeft();
-    let $breakpoint = $documentWidth - $viewportWidth;
-
-    return ($leftEdgeOfViewport + buffer) > $breakpoint;
   },
 
   widenQuoteContainer(){
     let $viewport = Ember.$(window);
     let $quoteContainingElement = Ember.$(QuoteContainingElement);
-    let expandBy = $viewport.width() * MultiplyWidthBy;
-    let newWidth = $quoteContainingElement.width() + expandBy;
-    $quoteContainingElement.width(newWidth);
-  }
+    let expandBy = $viewport.height() * MultiplyWidthBy;
+    let newHeight = $quoteContainingElement.height() + expandBy;
+    $quoteContainingElement.height(newHeight);
+  },
+
+  isScrolledToBottom(){
+    let $viewportHeight = Ember.$(window).height();
+    let $documentHeight = Ember.$(document).height();
+
+    let $bottomOfViewport = Ember.$(window).scrollTop();
+    let $breakpoint = $documentHeight - $viewportHeight;
+
+    return ($bottomOfViewport + buffer) > $breakpoint;
+  },
 });
