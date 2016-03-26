@@ -19,7 +19,7 @@ export default Ember.Service.extend(ScrollerSwitch, {
       this.widenQuoteContainer();
       store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
         let strategy = this.get('strategy');
-        strategy.set('where','right');
+        strategy.set('where','down');
       });
 
     }
