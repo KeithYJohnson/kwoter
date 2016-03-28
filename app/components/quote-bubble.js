@@ -24,7 +24,7 @@ export default Ember.Component.extend({
 			this.$().css({
 				left: `${position.left}px`,
 			  top:  `${position.top}px`,
-        position: 'absolute'
+        position: 'relative'
 			});
 		}
 	}
