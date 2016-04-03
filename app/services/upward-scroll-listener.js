@@ -13,15 +13,14 @@ export default Ember.Service.extend(ScrollerSwitch, {
   didScroll(){
     if ( this.isScrolledUp() ){
       console.log('upwardScrollListener.didScroll().isScrolledUp()');
-      // let store = this.get('store');
-      // let calculator = this.get('calculator');
-      //
-      // let numberOfQuotesToGrab = calculator.calculate();
+      let store = this.get('store');
+      let calculator = this.get('calculator');
+      let numberOfQuotesToGrab = calculator.calculate();
       this.lengthenQuoteContainer();
-      // store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
-      //   let strategy = this.get('strategy');
-      //   strategy.set('where','up');
-      // });
+      store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
+        let strategy = this.get('strategy');
+        strategy.set('where','up');
+      });
     }
   },
 
@@ -40,7 +39,7 @@ export default Ember.Service.extend(ScrollerSwitch, {
 
     // Prepend some blank div to the top of the application container.
     let lengthenBy = 1100;
-    let someBlankDiv = `<div class="prepended" style="height:${lengthenBy}px">Hello!  I was prepended by the upwardScrollListener</div>`
+    let someBlankDiv = `<div class="prepended" style="height:${lengthenBy}px;position:relative"></div>`
     $quoteContainingElement.prepend(someBlankDiv);
 
     // Scroll the viewport down by the height of ^^div

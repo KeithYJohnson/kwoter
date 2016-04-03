@@ -73,13 +73,15 @@ export default Ember.Service.extend({
   },
 
   generateRandomPosition(dimensions){
-    let strategy = this.get('positionStrategy');
     let quoteContainer = Ember.$(this.get('quoteContainingElement'));
     let viewportWidth = Ember.$(window).width();
+    let viewportHeight = Ember.$(window).height();
 
+    let topEdge  = 0;
+    let bottomEdge = quoteContainer.height();
     let leftEdge = 0;
     let rightEdge = quoteContainer.width();
-    let location = strategy.get('where');
+    let location = this.get('positionStrategy.where')
 
 
     if ( location === 'right' ) {
@@ -87,10 +89,20 @@ export default Ember.Service.extend({
       rightEdge = quoteContainer.width();
     }
 
+    if (location === 'up') {
+      // TODO These could just be placed 'inside' of the most recently prepended div as well.
+      let baseMultiplier = 2;  //Just an arbitrary number to get the quotes placed high enough in the document so that the user scrolls into them.
+      let numberOfPrepends = $('.prepended').length;
+      let multiplier = Math.max(baseMultiplier, numberOfPrepends);
+
+      bottomEdge = 0;
+      topEdge = (0 - viewportHeight) * multiplier * baseMultiplier;
+    }
+
     let randomCssLeft =
       steppedRandomInteger(leftEdge, rightEdge, 10);
     let randomCssTop =
-      steppedRandomInteger(0, quoteContainer.height(), 10);
+      steppedRandomInteger(topEdge, bottomEdge, 10);
 
     return {
       top: randomCssTop,
