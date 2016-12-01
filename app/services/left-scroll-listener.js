@@ -11,36 +11,47 @@ export default Ember.Service.extend(ScrollerSwitch, {
   strategy:   Ember.inject.service('position-strategy'),
 
   didScroll(){
-    if ( this.isScrolledUp() ){
+    if ( this.isScrolledLeft() ){
+      console.log('leftScrollListener.didScroll().isScrolledLeft()');
       let store = this.get('store');
       let calculator = this.get('calculator');
       let numberOfQuotesToGrab = calculator.calculate();
-      this.lengthenQuoteContainer();
+      this.widenQuoteContainer();
       store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
         let strategy = this.get('strategy');
-        strategy.set('where','up');
+        strategy.set('where','left');
       });
+
+      // let store = this.get('store');
+      // let calculator = this.get('calculator');
+      //
+      // let numberOfQuotesToGrab = calculator.calculate();
+      // this.widenQuoteContainer();
+      // store.query('quote', { limit: numberOfQuotesToGrab }).then( () => {
+      //   let strategy = this.get('strategy');
+      //   strategy.set('where','left');
+      // });
     }
   },
 
-  isScrolledUp(){
-    let $topEdgeOfViewport = Ember.$(window).scrollTop();
-    let $breakpoint = 0;
+  isScrolledLeft(){
+    let $leftEdgeOfViewport = Ember.$(window).scrollLeft();
+    let $breakpoint = 0
 
-    return $topEdgeOfViewport <= $breakpoint + buffer;
+    return ($leftEdgeOfViewport + buffer) > $breakpoint;
   },
 
-  lengthenQuoteContainer(){
+  widenQuoteContainer(){
     let $quoteContainingElement = Ember.$(QuoteContainingElement);
 
     // Prepend some blank div to the top of the application container.
-    let lengthenBy = 1100;
-    let someBlankDiv = `<div class="prepended" style="height:${lengthenBy}px;position:relative"></div>`
+    let widenBy = 1100;
+    let someBlankDiv = `<div class="left-prepend" style="height:${widenBy}px;position:relative;left:-1000px;"></div>`
     $quoteContainingElement.prepend(someBlankDiv);
 
     // Scroll the viewport down by the height of ^^div
-    let $currentScrollTop = Ember.$(window).scrollTop();
-    let $newScrollTop = $currentScrollTop + lengthenBy;
-    Ember.$(window).scrollTop($newScrollTop)
+    // let $currentScrollLeft = Ember.$(window).scrollLeft();
+    // let $newScrollLeft = $currentScrollLeft + widenBy;
+    // Ember.$(window).scrollLeft($newScrollLeft)
   }
 });

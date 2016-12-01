@@ -7,7 +7,7 @@ import ScrollerSwitch from 'kwoter/mixins/scroller-switch';
 // that there's some extra time to fetch and render
 // quotes as the user scrolls to the right-most edge
 // of the $(document)
-const buffer = 50;
+const buffer = -10;
 
 export default Ember.Service.extend(ScrollerSwitch, {
   store:      Ember.inject.service(),
